@@ -59,7 +59,7 @@ import com.datastax.oss.driver.api.querybuilder.insert.RegularInsert;
 import <%= packageName %>.repository.search.SearchCouchbaseRepository;
 <%_ } _%>
 <%_ if (databaseType === 'sql' && reactive) { _%>
-import org.apache.commons.beanutils.BeanComparator;   
+import org.apache.commons.beanutils.BeanComparator;
 <%_ } _%>
 <%_ if (cacheManagerIsAvailable === true) { _%>
 import org.springframework.cache.annotation.Cacheable;
@@ -124,9 +124,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 <%_ } _%>
 <%_ if (!reactive) { _%>
-import java.util.List;
-<%_ } _%>
-<%_ if (!reactive) { _%>
 import java.util.Optional;
 <%_ } _%>
 <%_ if (databaseType === 'sql' && reactive) { _%>
@@ -149,9 +146,6 @@ import java.util.Set;
 <%_ if (user.primaryKey.type === 'UUID') { _%>
 import java.util.UUID;
 <%_ } _%>
-<%_ if (databaseType !== 'cassandra' && !(databaseType === 'sql' && reactive) && authenticationType !== 'oauth2') { _%>
-import java.time.Instant;
-<%_ } _%>
 <% if (databaseType === 'couchbase') { %>
 import static <%= packageName %>.config.Constants.ID_DELIMITER;
 <% } %>
@@ -170,19 +164,6 @@ public interface UserRepository extends <% if (databaseType === 'sql') { %>JpaRe
     String USERS_BY_LOGIN_CACHE = "usersByLogin";
 
     String USERS_BY_EMAIL_CACHE = "usersByEmail";
-    <%_ } _%>
-    <%_ if (authenticationType !== 'oauth2') { _%>
-
-    <%= optionalOrMono %><<%= asEntity('User') %>> findOneByActivationKey(String activationKey);
-    <%_ } _%>
-    <%_ if (authenticationType !== 'oauth2') { _%>
-
-    <%= listOrFlux %><<%= asEntity('User') %>> findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(Instant dateTime);
-    <%_ } _%>
-
-    <%_ if (authenticationType !== 'oauth2') { _%>
-
-    <%= optionalOrMono %><<%= asEntity('User') %>> findOneByResetKey(String resetKey);
     <%_ } _%>
 
     <%_ if (authenticationType !== 'oauth2') { _%>
@@ -272,7 +253,7 @@ public interface UserRepository extends R2dbcRepository<<%= asEntity('User') %>,
 
     @Query("DELETE FROM <%= jhiTablePrefix %>_user_authority WHERE user_id = :userId")
     Mono<Void> deleteUserAuthorities(Long userId);
-        
+
 }
 
 <%_ if (authenticationType !== 'oauth2') { _%>

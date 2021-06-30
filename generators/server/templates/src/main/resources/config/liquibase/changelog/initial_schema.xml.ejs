@@ -33,9 +33,45 @@
 
     <!--
         JHipster core tables.
-        The initial schema has the '00000000000001' id, so that it is over-written if we re-generate it.
+        The initial schema has the '00000000000002' id, so that it is over-written if we re-generate it.
     -->
-    <changeSet id="00000000000001" author="jhipster">
+    <changeSet id="00000000000001" author="jhipster" context="!test">
+        <createView viewName="jhi_user" replaceIfExists="false">
+            SELECT ID,
+            USER_EMAIL AS LOGIN,
+            SIFRE AS PASSWORD_HASH,
+            AD AS FIRST_NAME,
+            AD AS LAST_NAME,
+            USER_EMAIL AS EMAIL,
+            IMAGE AS IMAGE_URL,
+            AKTIF AS ACTIVATED,
+            DIL AS LANG_KEY,
+            NULL AS ACTIVATION_KEY,
+            NULL AS RESET_KEY,
+            'SYSTEM' AS CREATED_BY,
+            CREATE_DATE AS CREATED_DATE,
+            NULL AS RESET_DATE,
+            'SYSTEM' AS LAST_MODIFIED_BY,
+            LAST_UPDATE_DATE AS LAST_MODIFIED_DATE
+            FROM ERPORT.ERP_KULLANICILAR
+            WHERE ID IS NOT NULL
+        </createView>
+
+        <createView viewName="jhi_authority" replaceIfExists="false">
+            SELECT DISTINCT CONCAT('ROLE_', ROL) AS NAME FROM ERPORT.ERP_KULLANICI_ROL
+        </createView>
+
+        <createView viewName="jhi_user_authority" replaceIfExists="false">
+            SELECT K.ID AS USER_ID, CONCAT('ROLE_', KR.ROL) AS AUTHORITY_NAME
+            FROM ERPORT.ERP_KULLANICI_ROL KR,
+            ERPORT.ERP_KULLANICILAR K
+            WHERE K.KULLANICI = KR.KULLANICI
+            AND KR.FABRIKA = K.FABRIKA
+            AND K.ID IS NOT NULL
+        </createView>
+    </changeSet>
+
+    <changeSet id="00000000000002" author="jhipster" context="test">
 <%_ if (!skipUserManagement || authenticationType === 'oauth2') {
         const idField = user.primaryKey.fields[0];
 _%>
@@ -138,7 +174,7 @@ _%>
         <sql dbms="mssql">
             SET IDENTITY_INSERT jhi_user ON;
         </sql>
-        <% } %>    
+        <% } %>
         <loadData
                   file="config/liquibase/data/user.csv"
                   separator=";"
@@ -153,7 +189,7 @@ _%>
         <sql dbms="mssql">
             SET IDENTITY_INSERT jhi_user OFF;
         </sql>
-        <% } %>   
+        <% } %>
         <dropDefaultValue tableName="<%= user.entityTableName %>" columnName="created_date" columnDataType="${datetimeType}"/>
         <loadData
                   file="config/liquibase/data/authority.csv"
@@ -172,7 +208,7 @@ _%>
 <%_ } _%>
     </changeSet>
 
-    <changeSet author="jhipster" id="00000000000002" context="test">
+    <changeSet author="jhipster" id="00000000000003" context="test">
         <createTable tableName="<%= jhiTablePrefix %>_date_time_wrapper">
             <column <% if (isAutoIncrementDB) { _%> autoIncrement="true" <%_ } %> name="id" type="BIGINT">
                 <constraints primaryKey="true" primaryKeyName="<%= jhiTablePrefix %>_date_time_wrapperPK"/>

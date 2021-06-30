@@ -260,7 +260,7 @@ module.exports = class extends BaseBlueprintGenerator {
           }
         }
         if (!this.skipUserManagement && !this.skipServer) {
-          this.updateLanguagesInLanguageMailServiceIT(this.languages, this.packageFolder);
+          // this.updateLanguagesInLanguageMailServiceIT(this.languages, this.packageFolder);
         }
       },
 

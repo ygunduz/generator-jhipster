@@ -546,10 +546,10 @@ const serverFiles = {
           file: 'package/web/rest/vm/LoginVM.java',
           renameTo: generator => `${generator.javaDir}web/rest/vm/LoginVM.java`,
         },
-        {
-          file: 'package/web/rest/UserJWTController.java',
-          renameTo: generator => `${generator.javaDir}web/rest/UserJWTController.java`,
-        },
+        // {
+        //   file: 'package/web/rest/UserJWTController.java',
+        //   renameTo: generator => `${generator.javaDir}web/rest/UserJWTController.java`,
+        // },
       ],
     },
     {
@@ -737,15 +737,15 @@ const serverFiles = {
         },
       ],
     },
-    {
-      path: SERVER_MAIN_SRC_DIR,
-      templates: [
-        {
-          file: 'package/GeneratedByJHipster.java',
-          renameTo: generator => `${generator.javaDir}GeneratedByJHipster.java`,
-        },
-      ],
-    },
+    // {
+    //   path: SERVER_MAIN_SRC_DIR,
+    //   templates: [
+    //     {
+    //       file: 'package/GeneratedByJHipster.java',
+    //       renameTo: generator => `${generator.javaDir}GeneratedByJHipster.java`,
+    //     },
+    //   ],
+    // },
   ],
   serverJavaConfig: [
     {
@@ -1570,7 +1570,7 @@ const serverFiles = {
 
         /* User management java service files */
         { file: 'package/service/UserService.java', renameTo: generator => `${generator.javaDir}service/UserService.java` },
-        { file: 'package/service/MailService.java', renameTo: generator => `${generator.javaDir}service/MailService.java` },
+        // { file: 'package/service/MailService.java', renameTo: generator => `${generator.javaDir}service/MailService.java` },
 
         /* User management java web files */
         {
@@ -1650,16 +1650,16 @@ const serverFiles = {
         },
       ],
     },
-    {
-      condition: generator => generator.applicationType !== 'microservice' && generator.authenticationType === 'jwt',
-      path: SERVER_TEST_SRC_DIR,
-      templates: [
-        {
-          file: 'package/web/rest/UserJWTControllerIT.java',
-          renameTo: generator => `${generator.testDir}web/rest/UserJWTControllerIT.java`,
-        },
-      ],
-    },
+    // {
+    //   condition: generator => generator.applicationType !== 'microservice' && generator.authenticationType === 'jwt',
+    //   path: SERVER_TEST_SRC_DIR,
+    //   templates: [
+    //     {
+    //       file: 'package/web/rest/UserJWTControllerIT.java',
+    //       renameTo: generator => `${generator.testDir}web/rest/UserJWTControllerIT.java`,
+    //     },
+    //   ],
+    // },
     {
       condition: generator => !generator.skipUserManagement && generator.cucumberTests,
       path: SERVER_TEST_SRC_DIR,
@@ -1684,22 +1684,22 @@ const serverFiles = {
       condition: generator => !generator.skipUserManagement,
       path: SERVER_TEST_SRC_DIR,
       templates: [
-        {
-          file: 'package/service/MailServiceIT.java',
-          renameTo: generator => `${generator.testDir}service/MailServiceIT.java`,
-        },
-        {
-          file: 'package/service/UserServiceIT.java',
-          renameTo: generator => `${generator.testDir}service/UserServiceIT.java`,
-        },
+        // {
+        //   file: 'package/service/MailServiceIT.java',
+        //   renameTo: generator => `${generator.testDir}service/MailServiceIT.java`,
+        // },
+        // {
+        //   file: 'package/service/UserServiceIT.java',
+        //   renameTo: generator => `${generator.testDir}service/UserServiceIT.java`,
+        // },
         {
           file: 'package/service/mapper/UserMapperTest.java',
           renameTo: generator => `${generator.testDir}service/mapper/UserMapperTest.java`,
         },
-        {
-          file: 'package/config/NoOpMailConfiguration.java',
-          renameTo: generator => `${generator.testDir}config/NoOpMailConfiguration.java`,
-        },
+        // {
+        //   file: 'package/config/NoOpMailConfiguration.java',
+        //   renameTo: generator => `${generator.testDir}config/NoOpMailConfiguration.java`,
+        // },
         {
           file: 'package/web/rest/PublicUserResourceIT.java',
           renameTo: generator => `${generator.testDir}web/rest/PublicUserResourceIT.java`,

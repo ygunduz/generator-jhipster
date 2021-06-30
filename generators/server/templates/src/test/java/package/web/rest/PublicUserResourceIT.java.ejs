@@ -167,7 +167,7 @@ class PublicUserResourceIT <% if (databaseType === 'cassandra') { %>extends Abst
     <%_ } _%>
     @BeforeEach
     public void initTest() {
-        user = UserResourceIT.initTestUser(userRepository<% if (databaseType === 'sql') { %>, em<% } %>);
+        user = UserResourceIT.initTestUser(<% if (databaseType === 'sql') { %> em<% } %>);
     }
 
     @Test
@@ -204,7 +204,7 @@ class PublicUserResourceIT <% if (databaseType === 'cassandra') { %>extends Abst
         assertThat(foundUser.getLogin()).isEqualTo(DEFAULT_LOGIN);
 <%_ for (field of user.fields.filter(field => !field.builtIn && field.relatedByOtherEntity)) { _%>
         assertThat(foundUser.get<%= javaBeanCase(field.fieldName) %>()).isEqualTo(DEFAULT_<%= field.fieldName.toUpperCase() %>);
-<%_ } _%>       
+<%_ } _%>
         <% } _%>
     }
 
