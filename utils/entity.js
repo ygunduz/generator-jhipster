@@ -180,9 +180,9 @@ function prepareEntityForTemplates(entityWithConfig, generator) {
   entityWithConfig.entityAngularNamePlural = pluralize(entityWithConfig.entityAngularName);
   entityWithConfig.entityReactName = entityWithConfig.entityClass + generator.upperFirstCamelCase(entityWithConfig.entityAngularJSSuffix);
 
-  entityWithConfig.entityApiUrl = entityWithConfig.entityNamePluralizedAndSpinalCased;
   entityWithConfig.entityStateName = _.kebabCase(entityWithConfig.entityAngularName);
   entityWithConfig.entityUrl = entityWithConfig.entityStateName;
+  entityWithConfig.entityApiUrl = entityWithConfig.entityInstance;
 
   entityWithConfig.entityTranslationKey = entityWithConfig.clientRootFolder
     ? _.camelCase(`${entityWithConfig.clientRootFolder}-${entityWithConfig.entityInstance}`)
