@@ -1626,6 +1626,28 @@ const serverFiles = {
         },
       ],
     },
+    // RPA Specific files
+    {
+      path: SERVER_MAIN_SRC_DIR,
+      templates: [
+        {
+          file: 'package/config/SecurityInterceptorConfiguration.java',
+          renameTo: generator => `${generator.javaDir}config/SecurityInterceptorConfiguration.java`,
+        },
+        {
+          file: 'package/config/SecurityServerInterceptor.java',
+          renameTo: generator => `${generator.javaDir}config/SecurityServerInterceptor.java`,
+        },
+        {
+          file: 'package/service/ErpSecurityService.java',
+          renameTo: generator => `${generator.javaDir}service/ErpSecurityService.java`,
+        },
+        {
+          file: 'package/domain/ErpPermission.java',
+          renameTo: generator => `${generator.javaDir}domain/ErpPermission.java`,
+        },
+      ],
+    },
     {
       condition: generator => !generator.skipUserManagement && generator.searchEngine === 'elasticsearch',
       path: SERVER_TEST_SRC_DIR,

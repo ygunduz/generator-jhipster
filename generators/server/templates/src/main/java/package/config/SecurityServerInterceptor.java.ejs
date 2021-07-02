@@ -1,0 +1,107 @@
+package <%= packageName %>.config;
+
+import io.jsonwebtoken.Claims;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
+import <%= packageName %>.security.SecurityUtils;
+import <%= packageName %>.security.jwt.TokenProvider;
+import <%= packageName %>.service.ErpSecurityService;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Component
+public class SecurityServerInterceptor implements HandlerInterceptor {
+    @Autowired
+    TokenProvider tokenProvider;
+
+    @Autowired
+    ErpSecurityService erpSecurityService;
+
+    @Autowired
+    MessageSource messageSource;
+
+    /* auto generated entity resources starts with /api/ continue with entity name */
+    private static final String API_PATH_STRING = "/api/";
+    /* auto generated service resources starts with /api/srv/ continue with queryName */
+    private static final String API_CUSTOM_SERVICE_PATH_STRING = "/api/srv/";
+
+    private static final String RPA_PREFIX = "rpa";
+
+    private String capFirstLetter(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    private String extractEntityOrServiceName(String path, String pathStarting) {
+        String result = path.substring(pathStarting.length());
+        if(result.contains("/")) {
+            result = result.substring(0 , result.indexOf("/"));
+        }
+        return result;
+    }
+
+    private String extractServiceNameForEntity(String entityNameFromPath, String method) {
+        String firstLetterCapitalized = capFirstLetter(entityNameFromPath);
+        String result;
+        if(method.equals("GET")) {
+            result = RPA_PREFIX + firstLetterCapitalized + "Getir";
+        }else {
+            result = RPA_PREFIX + firstLetterCapitalized + "Gunle";
+        }
+        return result;
+    }
+
+    private String extractMethodNameFromRequest(HttpServletRequest request) {
+        String method = request.getMethod();
+        String path = request.getRequestURI();
+        String result = null;
+        if(path.startsWith(API_CUSTOM_SERVICE_PATH_STRING)) {
+            result = extractEntityOrServiceName(path, API_CUSTOM_SERVICE_PATH_STRING);
+        } else if(path.startsWith(API_PATH_STRING)) {
+            result = extractEntityOrServiceName(path, API_PATH_STRING);
+            result = extractServiceNameForEntity(result, method);
+        }
+
+        return result;
+    }
+
+    private Long getCurrentUserFabrikaKod() {
+        Optional<String> jwt = SecurityUtils.getCurrentUserJWT();
+        if(jwt.isPresent()) {
+            String jwtString = jwt.get();
+            Claims claims = tokenProvider.getJwtParser().parseClaimsJws(jwtString).getBody();
+            return claims.get("fabrika", Long.class);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String methodName = extractMethodNameFromRequest(request);
+        if(methodName == null) { // api den farklı şekilde başlayan endpointler herkese açık
+            return true;
+        }
+
+        Long fabrika = getCurrentUserFabrikaKod();
+
+        List<String> grantedAuthorities = erpSecurityService.getPrivilege(methodName, fabrika);
+        Set<String> userAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+        boolean hasPermission = grantedAuthorities.stream().anyMatch(userAuthorities::contains);
+
+        if(!hasPermission) {
+            response.setStatus(403);
+            response.getWriter().write(messageSource.getMessage("access-denied", new Object[0], request.getLocale()));
+            return false;
+        }
+
+        return true;
+    }
+}

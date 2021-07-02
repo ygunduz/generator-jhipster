@@ -1,0 +1,95 @@
+package <%= packageName %>.domain;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
+
+@Entity
+@Table(schema = "ERPORT", name = "ERP_YETKI")
+public class ErpPermission implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Embeddable
+    public static class PermJoinClass implements Serializable {
+        @Column(name = "ROL")
+        private String role;
+
+        @Column(name = "SERVIS")
+        private String  service;
+
+        @Column(name = "FABRIKA")
+        private Long fabrika;
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
+
+        public String getService() {
+            return service;
+        }
+
+        public void setService(String service) {
+            this.service = service;
+        }
+
+        public Long getFabrika() {
+            return fabrika;
+        }
+
+        public void setFabrika(Long fabrika) {
+            this.fabrika = fabrika;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            PermJoinClass that = (PermJoinClass) o;
+            return Objects.equals(role, that.role) && Objects.equals(service, that.service) && Objects.equals(fabrika, that.fabrika);
+        }
+    }
+
+    @EmbeddedId
+    private PermJoinClass key;
+
+    @Column(name = "PATH")
+    private String path;
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public PermJoinClass getKey() {
+        return key;
+    }
+
+    public void setKey(PermJoinClass key) {
+        this.key = key;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ErpPermission)) {
+            return false;
+        }
+        return key != null && key.equals(((ErpPermission) o).key);
+    }
+
+    @Override
+    public int hashCode() {
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
+    }
+}

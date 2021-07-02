@@ -1,0 +1,25 @@
+package <%= packageName %>.service;
+
+import org.springframework.stereotype.Service;
+import <%= packageName %>.domain.ErpPermission;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class ErpSecurityService {
+
+    @PersistenceContext
+    EntityManager em;
+
+    public List<String> getPrivilege(String methodName, Long fabrika) {
+        TypedQuery<ErpPermission> query = em.createQuery("select p from ErpPermission p where p.key.fabrika = ?1 and p.key.service = ?2", ErpPermission.class);
+        query.setParameter(1, fabrika);
+        query.setParameter(2, methodName);
+
+        return query.getResultList().stream().map(p -> "ROLE_" + p.getKey().getRole()).collect(Collectors.toList());
+    }
+}
